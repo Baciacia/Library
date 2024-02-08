@@ -1,6 +1,7 @@
 package com.bacia.quickstart.Controller;
 
 import com.bacia.quickstart.Domain.Entity.AuthorEntity;
+import com.bacia.quickstart.Service.AuthorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class AuthorControllerIntegrationTest {
     private MockMvc mockMvc;
+    private AuthorService service;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public AuthorControllerIntegrationTest(MockMvc mockMvc) {
+    public AuthorControllerIntegrationTest(MockMvc mockMvc, AuthorService service) {
         this.mockMvc = mockMvc;
+        this.service = service;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -68,6 +71,34 @@ public class AuthorControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$.id").isNumber()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.firstName").value("Baciu")
+        );
+    }
+    @Test
+    public void testThatGetAllAuthorsReturnsHttpStatus200() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+    @Test
+    public void testThatGetAllAuthorsReturnsListOfAuthors() throws Exception {
+
+        AuthorEntity testAuthor = AuthorEntity.builder()
+                .firstName("Baciu")
+                .lastName("Alex")
+                .age(22)
+                .build();
+        service.createAuthor(testAuthor);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].firstName").value("Baciu")
         );
     }
 }

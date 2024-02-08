@@ -8,9 +8,13 @@ import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class AuthorController {
@@ -26,5 +30,10 @@ public class AuthorController {
         AuthorEntity authorEntity = mapper.mapDtoToEntity(author);
         AuthorEntity savedAuthorEntity = service.createAuthor(authorEntity);
         return new ResponseEntity<>(mapper.mapEntityToDto(savedAuthorEntity), HttpStatus.CREATED);
+    }
+    @GetMapping("/authors")
+    public List<AuthorDto> getAllAuthors(){
+        List<AuthorEntity> allAuthorsEntity = service.getAllAuthors();
+        return allAuthorsEntity.stream().map(mapper::mapEntityToDto).collect(Collectors.toList());
     }
 }

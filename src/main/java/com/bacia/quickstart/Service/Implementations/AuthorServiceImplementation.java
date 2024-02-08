@@ -6,6 +6,8 @@ import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AuthorServiceImplementation implements AuthorService {
     private final AuthorRepository repository;
@@ -16,5 +18,10 @@ public class AuthorServiceImplementation implements AuthorService {
     @Override
     public AuthorEntity createAuthor(AuthorEntity author) {
         return repository.save(author);
+    }
+
+    @Override
+    public List<AuthorEntity> getAllAuthors() {
+        return repository.findAll();
     }
 }
