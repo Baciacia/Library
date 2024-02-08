@@ -1,8 +1,7 @@
-package com.bacia.quickstart.Entity;
+package com.bacia.quickstart.Domain.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -11,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "authors")
-public class Author {
+public class AuthorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
     private Long id;
