@@ -6,6 +6,8 @@ import com.bacia.quickstart.Mappers.Mapper;
 import com.bacia.quickstart.Mappers.impl.AuthorMapperImpl;
 import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,14 +26,12 @@ public class AuthorController {
         this.service = service;
         this.mapper = mapper;
     }
-
     @PostMapping("/author")
     public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
         AuthorEntity authorEntity = mapper.mapDtoToEntity(author);
         AuthorEntity savedAuthorEntity = service.createAuthor(authorEntity);
         return new ResponseEntity<>(mapper.mapEntityToDto(savedAuthorEntity), HttpStatus.CREATED);
     }
-
     @GetMapping("/author/{id}")
     public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id) {
         Optional<AuthorEntity> returnAuthor = service.getAuthor(id);
@@ -40,13 +40,11 @@ public class AuthorController {
             return new ResponseEntity<>(authorDto, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
     @GetMapping("/authors")
-    public List<AuthorDto> getAllAuthors() {
-        List<AuthorEntity> allAuthorsEntity = service.getAllAuthors();
-        return allAuthorsEntity.stream().map(mapper::mapEntityToDto).collect(Collectors.toList());
+    public Page<AuthorDto> getAllAuthors(Pageable pageable) {
+        Page<AuthorEntity> allAuthorsEntity = service.getAllAuthors(pageable);
+       return allAuthorsEntity.map(mapper::mapEntityToDto);
     }
-
     @PutMapping("/author/{id}")
     public ResponseEntity<AuthorDto> fullUpdateAuthor(@PathVariable Long id, @RequestBody AuthorDto authorDto) {
         if (!service.isExists(id)) {
@@ -60,7 +58,6 @@ public class AuthorController {
                                             authorDto))), HttpStatus.OK);
 
         }
-
     }
     @DeleteMapping("/author/{id}")
     public ResponseEntity deleteAuthor (@PathVariable Long id){

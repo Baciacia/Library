@@ -4,6 +4,8 @@ import com.bacia.quickstart.Domain.Entity.AuthorEntity;
 import com.bacia.quickstart.Repository.AuthorRepository;
 import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,11 @@ public class AuthorServiceImplementation implements AuthorService {
     @Override
     public List<AuthorEntity> getAllAuthors() {
         return repository.findAll();
+    }
+
+    @Override
+    public Page<AuthorEntity> getAllAuthors(Pageable pageable) {
+        return null;
     }
 
     @Override

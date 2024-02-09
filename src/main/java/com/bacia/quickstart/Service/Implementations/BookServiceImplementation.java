@@ -4,6 +4,8 @@ import com.bacia.quickstart.Domain.Entity.BookEntity;
 import com.bacia.quickstart.Repository.BookRepository;
 import com.bacia.quickstart.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class BookServiceImplementation implements BookService {
     @Override
     public List<BookEntity> getAllBooks() {
         return repository.findAll();
+    }
+
+    @Override
+    public Page<BookEntity> getAllBooks(Pageable pageable) {
+        return null;
     }
 
     @Override

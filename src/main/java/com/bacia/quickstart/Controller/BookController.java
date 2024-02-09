@@ -5,6 +5,8 @@ import com.bacia.quickstart.Domain.Entity.BookEntity;
 import com.bacia.quickstart.Mappers.Mapper;
 import com.bacia.quickstart.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public List<BookDto> getAllBooks(){
-        List<BookEntity> allBooksEntity = service.getAllBooks();
-        return allBooksEntity.stream().map(mapper::mapEntityToDto).collect(Collectors.toList());
+    public Page<BookDto> getAllBooks(Pageable pageable){
+        Page<BookEntity> allBooksEntity = service.getAllBooks(pageable);
+        return allBooksEntity.map(mapper::mapEntityToDto);
     }
 
     @PutMapping("/book/{id}")
