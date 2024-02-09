@@ -6,6 +6,9 @@ import com.bacia.quickstart.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class BookServiceImplementation implements BookService {
     private final BookRepository repository;
@@ -18,5 +21,25 @@ public class BookServiceImplementation implements BookService {
     public BookEntity createBook(String id, BookEntity book) {
         book.setIsbn(id);
         return repository.save(book);
+    }
+
+    @Override
+    public Optional<BookEntity> getBook(String id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public List<BookEntity> getAllBooks() {
+        return repository.findAll();
+    }
+
+    @Override
+    public boolean exist(String id) {
+        return repository.existsById(id);
+    }
+
+    @Override
+    public void deleteBook(String id) {
+        repository.deleteById(id);
     }
 }

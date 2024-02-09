@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthorServiceImplementation implements AuthorService {
@@ -19,9 +20,22 @@ public class AuthorServiceImplementation implements AuthorService {
     public AuthorEntity createAuthor(AuthorEntity author) {
         return repository.save(author);
     }
-
+    @Override
+    public Optional<AuthorEntity> getAuthor(Long id) {
+        return repository.findById(id);
+    }
     @Override
     public List<AuthorEntity> getAllAuthors() {
         return repository.findAll();
+    }
+
+    @Override
+    public Boolean isExists(Long id) {
+        return repository.existsById(id);
+    }
+
+    @Override
+    public void deleteAuthor(Long id) {
+        repository.deleteById(id);
     }
 }

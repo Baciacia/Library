@@ -7,10 +7,11 @@ import com.bacia.quickstart.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class BookController {
@@ -22,10 +23,35 @@ public class BookController {
         this.mapper = mapper;
     }
 
+    @GetMapping("/book/{id}")
+    public ResponseEntity<BookDto> getBook(@PathVariable String id) {
+        Optional<BookEntity> returnedBook = service.getBook(id);
+        return returnedBook.map(bookEntity -> {
+            BookDto responseDto = mapper.mapEntityToDto(bookEntity);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }).orElse(
+                new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
+    }
+
+    @GetMapping("/books")
+    public List<BookDto> getAllBooks(){
+        List<BookEntity> allBooksEntity = service.getAllBooks();
+        return allBooksEntity.stream().map(mapper::mapEntityToDto).collect(Collectors.toList());
+    }
+
     @PutMapping("/book/{id}")
-    public ResponseEntity<BookDto> createBook(@PathVariable String id, @RequestBody BookDto bookDto ){
+
+    public ResponseEntity<BookDto> createUpdateBook(@PathVariable String id, @RequestBody BookDto bookDto ){
         BookEntity book = mapper.mapDtoToEntity(bookDto);
+        boolean exist = service.exist(id);
         BookEntity savedBook = service.createBook(id, book);
-        return new ResponseEntity<>(mapper.mapEntityToDto(savedBook), HttpStatus.CREATED);
+        if(!exist){
+            return new ResponseEntity<>(mapper.mapEntityToDto(savedBook), HttpStatus.CREATED);
+        }
+        else{
+            return new ResponseEntity<>(mapper.mapEntityToDto(savedBook), HttpStatus.OK);
+        }
+
     }
 }

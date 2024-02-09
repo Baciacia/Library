@@ -8,32 +8,63 @@ import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 public class AuthorController {
     private final AuthorService service;
     private final Mapper<AuthorEntity, AuthorDto> mapper;
+
     @Autowired
     public AuthorController(AuthorService service, Mapper<AuthorEntity, AuthorDto> mapper) {
         this.service = service;
         this.mapper = mapper;
     }
+
     @PostMapping("/author")
-    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author){
+    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
         AuthorEntity authorEntity = mapper.mapDtoToEntity(author);
         AuthorEntity savedAuthorEntity = service.createAuthor(authorEntity);
         return new ResponseEntity<>(mapper.mapEntityToDto(savedAuthorEntity), HttpStatus.CREATED);
     }
+
+    @GetMapping("/author/{id}")
+    public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id) {
+        Optional<AuthorEntity> returnAuthor = service.getAuthor(id);
+        return returnAuthor.map(authorEntity -> {
+            AuthorDto authorDto = mapper.mapEntityToDto(authorEntity);
+            return new ResponseEntity<>(authorDto, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping("/authors")
-    public List<AuthorDto> getAllAuthors(){
+    public List<AuthorDto> getAllAuthors() {
         List<AuthorEntity> allAuthorsEntity = service.getAllAuthors();
         return allAuthorsEntity.stream().map(mapper::mapEntityToDto).collect(Collectors.toList());
+    }
+
+    @PutMapping("/author/{id}")
+    public ResponseEntity<AuthorDto> fullUpdateAuthor(@PathVariable Long id, @RequestBody AuthorDto authorDto) {
+        if (!service.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            authorDto.setId(id);
+            return new ResponseEntity<>(
+                    mapper.mapEntityToDto(
+                            service.createAuthor(
+                                    mapper.mapDtoToEntity(
+                                            authorDto))), HttpStatus.OK);
+
+        }
+
+    }
+    @DeleteMapping("/author/{id}")
+    public ResponseEntity deleteAuthor (@PathVariable Long id){
+        service.deleteAuthor(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
