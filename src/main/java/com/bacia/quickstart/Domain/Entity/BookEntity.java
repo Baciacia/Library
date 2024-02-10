@@ -1,6 +1,5 @@
 package com.bacia.quickstart.Domain.Entity;
 
-import com.bacia.quickstart.Domain.Entity.AuthorEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +14,12 @@ public class BookEntity {
     @Id
     private String isbn;
     private String title;
+    private String genre;
+    private int numberOfExemplars;
+    private int yearPublish;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id")
     private AuthorEntity author;
+
+
 }

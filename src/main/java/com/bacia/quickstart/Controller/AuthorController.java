@@ -3,7 +3,6 @@ package com.bacia.quickstart.Controller;
 import com.bacia.quickstart.Domain.DTO.AuthorDto;
 import com.bacia.quickstart.Domain.Entity.AuthorEntity;
 import com.bacia.quickstart.Mappers.Mapper;
-import com.bacia.quickstart.Mappers.impl.AuthorMapperImpl;
 import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,10 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @RestController
 public class AuthorController {
@@ -43,7 +40,7 @@ public class AuthorController {
     @GetMapping("/authors")
     public Page<AuthorDto> getAllAuthors(Pageable pageable) {
         Page<AuthorEntity> allAuthorsEntity = service.getAllAuthors(pageable);
-       return allAuthorsEntity.map(mapper::mapEntityToDto);
+        return allAuthorsEntity.map(mapper::mapEntityToDto);
     }
     @PutMapping("/author/{id}")
     public ResponseEntity<AuthorDto> fullUpdateAuthor(@PathVariable Long id, @RequestBody AuthorDto authorDto) {

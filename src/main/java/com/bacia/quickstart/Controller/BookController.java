@@ -10,10 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @RestController
 public class BookController {
@@ -35,15 +33,23 @@ public class BookController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND)
         );
     }
+    @GetMapping("/books/year/{year}")
+    public Page<BookDto> getAllBooksAfterYear(@PathVariable int year, Pageable pageable){
 
+      Page<BookEntity> bookList = service.getAllBooksAfterYear(year, pageable);
+      return bookList.map(mapper::mapEntityToDto);
+    }
+    @GetMapping("/books/genre/{gen}")
+    public Page<BookDto> getAllGenBooks(@PathVariable String gen, Pageable pageable){
+        Page<BookEntity> books = service.getAllBooksByGenre(gen, pageable);
+        return books.map(mapper::mapEntityToDto);
+    }
     @GetMapping("/books")
     public Page<BookDto> getAllBooks(Pageable pageable){
         Page<BookEntity> allBooksEntity = service.getAllBooks(pageable);
         return allBooksEntity.map(mapper::mapEntityToDto);
     }
-
     @PutMapping("/book/{id}")
-
     public ResponseEntity<BookDto> createUpdateBook(@PathVariable String id, @RequestBody BookDto bookDto ){
         BookEntity book = mapper.mapDtoToEntity(bookDto);
         boolean exist = service.exist(id);

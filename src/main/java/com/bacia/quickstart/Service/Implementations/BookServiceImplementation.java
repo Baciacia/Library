@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,17 @@ public class BookServiceImplementation implements BookService {
 
     @Override
     public Page<BookEntity> getAllBooks(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
+    }
+
+    @Override
+    public Page<BookEntity> getAllBooksByGenre(String gen, Pageable pageable) {
+        return repository.findAllByGenre(gen,pageable);
+    }
+
+    @Override
+    public Page<BookEntity> getAllBooksAfterYear(int year, Pageable pageable) {
+        return repository.findAllByYearPublishGreaterThanEqual(year, pageable);
     }
 
     @Override
