@@ -22,16 +22,10 @@ public class BookController {
         this.service = service;
         this.mapper = mapper;
     }
-
     @GetMapping("/book/{id}")
     public ResponseEntity<BookDto> getBook(@PathVariable String id) {
-        Optional<BookEntity> returnedBook = service.getBook(id);
-        return returnedBook.map(bookEntity -> {
-            BookDto responseDto = mapper.mapEntityToDto(bookEntity);
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-        }).orElse(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND)
-        );
+        BookEntity returnedBook = service.getBook(id).get();
+        return new ResponseEntity<>(mapper.mapEntityToDto(returnedBook), HttpStatus.OK);
     }
     @GetMapping("/books/year/{year}")
     public Page<BookDto> getAllBooksAfterYear(@PathVariable int year, Pageable pageable){
@@ -60,6 +54,5 @@ public class BookController {
         else{
             return new ResponseEntity<>(mapper.mapEntityToDto(savedBook), HttpStatus.OK);
         }
-
     }
 }

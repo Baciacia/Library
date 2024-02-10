@@ -1,6 +1,7 @@
 package com.bacia.quickstart.Service.Implementations;
 
 import com.bacia.quickstart.Domain.Entity.BookEntity;
+import com.bacia.quickstart.Error.BookNotFoundException;
 import com.bacia.quickstart.Repository.BookRepository;
 import com.bacia.quickstart.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,9 @@ public class BookServiceImplementation implements BookService {
         book.setIsbn(id);
         return repository.save(book);
     }
-
     @Override
     public Optional<BookEntity> getBook(String id) {
-        return repository.findById(id);
+        return Optional.ofNullable(repository.findById(id).orElseThrow(() -> new BookNotFoundException("Cartea nu exista!")));
     }
 
     @Override

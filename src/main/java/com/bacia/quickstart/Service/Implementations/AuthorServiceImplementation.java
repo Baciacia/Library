@@ -1,6 +1,7 @@
 package com.bacia.quickstart.Service.Implementations;
 
 import com.bacia.quickstart.Domain.Entity.AuthorEntity;
+import com.bacia.quickstart.Error.AuthorNotFoundException;
 import com.bacia.quickstart.Repository.AuthorRepository;
 import com.bacia.quickstart.Service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AuthorServiceImplementation implements AuthorService {
     }
     @Override
     public Optional<AuthorEntity> getAuthor(Long id) {
-        return repository.findById(id);
+        return Optional.ofNullable(repository.findById(id).orElseThrow(() -> new AuthorNotFoundException("Autorul nu exista!")));
     }
     @Override
     public List<AuthorEntity> getAllAuthors() {
